@@ -54,24 +54,21 @@ public class MainActivity extends AppCompatActivity {
         }
         button1.setOnClickListener(view -> {
             //判断按钮代码
-            Toast.makeText(MainActivity.this,"Login",Toast.LENGTH_SHORT).show();
+            //Toast.makeText(MainActivity.this,"Login",Toast.LENGTH_SHORT).show();
             Log.d("MainActivity","Click Save");
             String account = accountEdit.getText().toString();
             String password = passwordEdit.getText().toString();
-
-
-
-            if(account.equals("123456")&&password.equals("123456")){
-                editor = pref.edit();
-                if(rememberPass.isChecked()){
-                    editor.putBoolean("remember_password",true);
-                    editor.putString("account",account);
-                    editor.putString("password",password);
-                }else{
-                    editor.clear();
-                }
-                editor.apply();
+            sendLogin();
+            editor = pref.edit();
+            if(rememberPass.isChecked()){
+                editor.putBoolean("remember_password",true);
+                editor.putString("account",account);
+                editor.putString("password",password);
+            }else{
+                editor.clear();
             }
+            editor.apply();
+
         });
 
         button_logout.setOnClickListener(view -> {
@@ -114,6 +111,28 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
+    private void sendLogin(){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    String account = accountEdit.getText().toString();
+                    String password = passwordEdit.getText().toString();
+                    OkHttpClient client =new OkHttpClient();
+                    String url = "http://10.200.132.20:801/eportal/portal/login?" + "user_account=" + account +
+                            "&user_password=" + password;
+                    Request request = new Request.Builder()
+                            .url(url)
+                            .build();
+                    Response response = client.newCall(request).execute();
+                    String responseData = response.body().string();
+                    showResponse(responseData);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+    }
 
     private void sendLogout(){
         new Thread(new Runnable() {
