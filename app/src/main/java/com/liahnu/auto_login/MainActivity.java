@@ -1,23 +1,20 @@
 package com.liahnu.auto_login;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.print.PrintManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.TextView;
+import android.widget.Switch;
 import android.widget.Toast;
 
-import androidx.annotation.IntegerRes;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -42,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
         accountEdit= (EditText) findViewById(R.id.User);
         passwordEdit =(EditText) findViewById(R.id.Password);
         rememberPass = (CheckBox) findViewById(R.id.remember_pass);
+        Switch autologin = (Switch) findViewById(R.id.Auto_Login);
         Button button1 = (Button) findViewById(R.id.button_login);
         Button button_logout =(Button) findViewById(R.id.button_logout);
         boolean isRemember = pref.getBoolean("remember_password",false);
@@ -144,6 +142,7 @@ public class MainActivity extends AppCompatActivity {
                             .url("http://10.200.132.20:801/eportal/portal/logout?user_account=drcom&user_password=123")
                             .build();
                     Response response = client.newCall(request).execute();
+                    assert response.body() != null;
                     String responseData = response.body().string();
                     showResponse(responseData);
                 } catch (Exception e) {

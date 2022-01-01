@@ -3,7 +3,7 @@
     <string name="password">PassWord</string>
     <string name="user_login">User Login</string>
     <string name="user_name">User_name</string>
-    <string name="start_auto_login">Start Auto Login</string>
+    <string name="start_auto_login">Start Auto Login(Unuseful)</string>
     <string name="button2">Login</string>
     <string name="setting">Setting</string>
     <string name="exit">Exit</string>
