@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/Setting_item"
+        android:title="@string/setting" />
+
+    <item
+        android:id="@+id/internet"
+        android:title="@string/internet" />
+
+    <item
+        android:id="@+id/WebView"
+        android:title="@string/webview"/>
+
+    <item
+        android:id="@+id/Exit_item"
+        android:title="@string/exit"/>
+
+</menu>

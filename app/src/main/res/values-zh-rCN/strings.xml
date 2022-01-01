@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">自动登录</string>
+    <string name="password">密码</string>
+    <string name="user_login">用户登录</string>
+    <string name="user_name">用户名</string>
+    <string name="start_auto_login">启动自动登录</string>
+    <string name="button2">登录</string>
+    <string name="setting">设置</string>
+    <string name="exit">退出</string>
+    <string name="internet">访问登录网站</string>
+    <string name="remember_password">记住密码</string>
+    <string name="webview">WebView</string>
+</resources>
