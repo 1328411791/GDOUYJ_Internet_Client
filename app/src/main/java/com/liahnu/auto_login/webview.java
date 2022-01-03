@@ -1,19 +1,11 @@
 package com.liahnu.auto_login;
 
 import android.os.Bundle;
-import android.view.View;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-
-import java.io.BufferedReader;
-import java.net.HttpURLConnection;
-import java.net.URI;
-import java.net.URL;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;

@@ -15,7 +15,8 @@
         android:id="@+id/sent_requert"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Send requert" />
+        android:text="Send requert"
+        tools:ignore="MissingConstraints" />
 
     <ScrollView
         android:layout_width="match_parent"

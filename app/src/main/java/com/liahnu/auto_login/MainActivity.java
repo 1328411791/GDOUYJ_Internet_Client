@@ -11,6 +11,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Switch;
 import android.widget.Toast;
@@ -27,21 +28,21 @@ public class MainActivity extends AppCompatActivity {
     private SharedPreferences.Editor editor;
     private EditText accountEdit;
     private EditText passwordEdit;
-    private Button login;
+    private Switch autologin;
     private CheckBox rememberPass;
-    private String responseText="null";
+    private String responseText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         pref = PreferenceManager.getDefaultSharedPreferences(this);
-        accountEdit= (EditText) findViewById(R.id.User);
-        passwordEdit =(EditText) findViewById(R.id.Password);
-        rememberPass = (CheckBox) findViewById(R.id.remember_pass);
-        Switch autologin = (Switch) findViewById(R.id.Auto_Login);
-        Button button1 = (Button) findViewById(R.id.button_login);
-        Button button_logout =(Button) findViewById(R.id.button_logout);
+        accountEdit= findViewById(R.id.User);
+        passwordEdit = findViewById(R.id.Password);
+        rememberPass = findViewById(R.id.remember_pass);
+        autologin = findViewById(R.id.Auto_Login);
+        Button button1 = findViewById(R.id.button_login);
+        Button button_logout =findViewById(R.id.button_logout);
         boolean isRemember = pref.getBoolean("remember_password",false);
         if (isRemember){
             String account =pref.getString("account","");
@@ -74,6 +75,16 @@ public class MainActivity extends AppCompatActivity {
             sendLogout();
         });
 
+        autologin.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if(b) {
+                    Toast.makeText(MainActivity.this,"Yes",Toast.LENGTH_SHORT).show();
+                }else{
+                    Toast.makeText(MainActivity.this,"No",Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
 
     }
 
@@ -110,55 +121,47 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void sendLogin(){
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    String account = accountEdit.getText().toString();
-                    String password = passwordEdit.getText().toString();
-                    OkHttpClient client =new OkHttpClient();
-                    String url = "http://10.200.132.20:801/eportal/portal/login?" + "user_account=" + account +
-                            "&user_password=" + password;
-                    Request request = new Request.Builder()
-                            .url(url)
-                            .build();
-                    Response response = client.newCall(request).execute();
-                    String responseData = response.body().string();
-                    showResponse(responseData);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+        new Thread(() -> {
+            try {
+                String account = accountEdit.getText().toString();
+                String password = passwordEdit.getText().toString();
+                OkHttpClient client =new OkHttpClient();
+                String url = "http://10.200.132.20:801/eportal/portal/login?" + "user_account=" + account +
+                        "&user_password=" + password;
+                Request request = new Request.Builder()
+                        .url(url)
+                        .build();
+                Response response = client.newCall(request).execute();
+                assert response.body() != null;
+                String responseData = response.body().string();
+                showResponse(responseData);
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }).start();
     }
 
     private void sendLogout(){
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    OkHttpClient client =new OkHttpClient();
-                    Request request = new Request.Builder()
-                            .url("http://10.200.132.20:801/eportal/portal/logout?user_account=drcom&user_password=123")
-                            .build();
-                    Response response = client.newCall(request).execute();
-                    assert response.body() != null;
-                    String responseData = response.body().string();
-                    showResponse(responseData);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+        new Thread(() -> {
+            try {
+                OkHttpClient client =new OkHttpClient();
+                Request request = new Request.Builder()
+                        .url("http://10.200.132.20:801/eportal/portal/logout?user_account=drcom&user_password=123")
+                        .build();
+                Response response = client.newCall(request).execute();
+                assert response.body() != null;
+                String responseData = response.body().string();
+                showResponse(responseData);
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }).start();
     }
 
     private void showResponse(final String response){
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                responseText =response;
-                Toast.makeText(MainActivity.this,response,Toast.LENGTH_SHORT).show();
-            }
+        runOnUiThread(() -> {
+            responseText =response;
+            Toast.makeText(MainActivity.this,response,Toast.LENGTH_SHORT).show();
         });
     }
 }
