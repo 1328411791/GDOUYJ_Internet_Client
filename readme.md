@@ -17,8 +17,6 @@
 ### 登录
 访问抓包后可以很明显发现，登录就是get这个url请求（至于为什么不是post账号密码，或者为啥要明文传输密码，我不知道）
 
-![](https://gitee.com/liahnu/img/raw/master/img/202201031304949.png)
-
 http://10.200.132.20:801/eportal/portal/login?user_account=[]&user_password=[]
 把[]替换成登录内容
 
