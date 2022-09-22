@@ -1,4 +1,4 @@
-package com.liahnu.auto_login;
+package com.liahnu.auto_login.view;
 
 import android.os.Bundle;
 import android.widget.Button;
@@ -7,11 +7,13 @@ import android.widget.TextView;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.liahnu.auto_login.R;
+
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
-public class webview extends AppCompatActivity {
+public class WebView extends AppCompatActivity {
     TextView responseText;
 
     @Override

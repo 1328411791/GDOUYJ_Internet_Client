@@ -15,14 +15,30 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="1.0">
-
-        <Switch
-            android:id="@+id/setting1"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="no_use"
-            android:textSize="18sp"
-            tools:ignore="UseSwitchCompatOrMaterialXml" />
+            android:orientation="vertical">
+            <Switch
+                android:id="@+id/setting1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="48dp"
+                android:text="no_use"
+                android:textSize="18sp"
+                tools:ignore="UseSwitchCompatOrMaterialXml" />
+
+            <Switch
+                android:id="@+id/setting2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="48dp"
+                android:text="no_use"
+                android:textSize="18sp"
+                tools:ignore="UseSwitchCompatOrMaterialXml" />
+
+        </LinearLayout>
 
     </ScrollView>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
