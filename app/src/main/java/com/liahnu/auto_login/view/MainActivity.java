@@ -10,6 +10,7 @@ import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.util.AndroidRuntimeException;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -24,6 +25,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.liahnu.auto_login.R;
+import com.liahnu.auto_login.utilliiy.GetWifiInfo;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -54,8 +56,8 @@ public class MainActivity extends AppCompatActivity {
         Button button_logout = findViewById(R.id.button_logout);
         boolean isAutoLogin = pref.getBoolean("auto_login", false);
         boolean isRemember = pref.getBoolean("remember_password", false);
-
-        Toast.makeText(MainActivity.this, getSsid(), Toast.LENGTH_SHORT).show();
+        Toast.makeText(MainActivity.this, GetWifiInfo.getSsid(getApplicationContext()),
+                Toast.LENGTH_SHORT).show();
 
         if (isRemember) {
             String account = pref.getString("account", "");
@@ -190,20 +192,5 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private String getSsid() {
-        try {
-            WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-            WifiInfo wifiInfo;
-            String ssid = null;
-            wifiInfo = wifiManager.getConnectionInfo();
-            if (wifiInfo.getSupplicantState() == SupplicantState.COMPLETED) {
-                ssid = wifiInfo.getSSID();
-            }
-            return ssid;
-        }catch (RuntimeException e){
-            Toast.makeText(this,"未链接wifi活未知错误",Toast.LENGTH_SHORT).show();
-            Log.e("Wifi",e.toString());
-        }
-        return null;
-    }
+
 }
