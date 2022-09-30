@@ -23,7 +23,16 @@ http://10.200.132.20:801/eportal/portal/login?user_account=[]&user_password=[]
 
 
 ### 登出
-待完善
+http://10.200.132.20:801/eportal/portal/logout
+
+
+## 关于校园网有线链接
+经过测试，学校drcom X版本只开启了802.1x协议登录，使用pandvan之类路由器,相关配置如下
+![image](https://user-images.githubusercontent.com/49276659/193325371-1c9f8877-50fb-46cb-9cab-e5eca6d94352.png)
+
+
+
+
 
 
 
