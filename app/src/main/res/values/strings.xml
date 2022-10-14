@@ -3,12 +3,12 @@
     <string name="password">PassWord</string>
     <string name="user_login">User Login</string>
     <string name="user_name">User_name</string>
-    <string name="start_auto_login">Hold Login(Unuseful)</string>
+    <string name="start_auto_login">Hold Login(not available)</string>
     <string name="button2">Login</string>
     <string name="setting">Setting</string>
     <string name="exit">Exit</string>
     <string name="internet">Internet</string>
-    <string name="remember_password">Remember passwoeld</string>
+    <string name="remember_password">Remember password</string>
     <string name="webview">WebView</string>
     <string name="logout">Logout</string>
     <string name="auto_login">开启应用后自动登录</string>
