@@ -20,11 +20,6 @@ jobs:
         with:
           java-version: '11'
           distribution: 'adopt'
-      - name: release apk sign
-        run: |
-          echo "给apk增加签名"
-          cp $GITHUB_WORKSPACE/.github/workflows/android.keystore $GITHUB_WORKSPACE/app/android.keystore
-          sed '$a\RELEASE_STORE_FILE=./android.keystore'          $GITHUB_WORKSPACE/gradle.properties -i
       - name: build with gradle
         run: |
           echo "开始进行release构建"
@@ -34,5 +29,5 @@ jobs:
         uses: actions/upload-artifact@master
         if: always()
         with:
-          name: xupdate_apk
+          name: update_apk
           path: ${{ github.workspace }}/app/build/outputs/apk/release
