@@ -1,0 +1,33 @@
+name: Android CI
+
+on:
+  release:
+    types: [published]
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: set up JDK 11
+        uses: actions/setup-java@v2
+        with:
+          java-version: '11'
+          distribution: 'adopt'
+      - name: build with gradle
+        run: |
+          echo "开始进行release构建"
+          chmod +x gradlew
+          ./gradlew app:assembleRelease
+      - name : upload apk
+        uses: actions/upload-artifact@master
+        if: always()
+        with:
+          name: update_apk
+          path: ${{ github.workspace }}/app/build/outputs/apk/release
