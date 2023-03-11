@@ -3,28 +3,20 @@ package com.liahnu.auto_login.client.domain;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class GetChallengeResponse {
+public class SurnPortalRespond {
 
-    // jQuery112405957177920927834_1678520694892({"challenge":"19c6a00d0d6b719d4169967a5869b92778b8c97d520fff758d6f086148f1be73","client_ip":"10.200.149.60","ecode":0,"error":"ok","error_msg":"","expire":"60","online_ip":"10.202.46.12","res":"ok","srun_ver":"SRunCGIAuthIntfSvr V1.18 B20220304","st":1678520788})
+    //jQuery112405957177920927834_1678520694892({"client_ip":"10.200.149.60","ecode":"","error":"login_error","error_msg":"INFO failed, BAS respond timeout.","online_ip":"10.202.46.12","res":"login_error","srun_ver":"SRunCGIAuthIntfSvr V1.18 B20220304","st":1678520791})
 
-    private String challenge;
     private String client_ip;
-    private int ecode;
+    private String ecode;
     private String error;
     private String error_msg;
-    private String expire;
     private String online_ip;
     private String res;
     private String srun_ver;
     private int st;
 
-    public String getChallenge() {
-        return challenge;
-    }
 
-    public void setChallenge(String challenge) {
-        this.challenge = challenge;
-    }
 
     public String getClient_ip() {
         return client_ip;
@@ -34,11 +26,11 @@ public class GetChallengeResponse {
         this.client_ip = client_ip;
     }
 
-    public int getEcode() {
+    public String getEcode() {
         return ecode;
     }
 
-    public void setEcode(int ecode) {
+    public void setEcode(String ecode) {
         this.ecode = ecode;
     }
 
@@ -56,14 +48,6 @@ public class GetChallengeResponse {
 
     public void setError_msg(String error_msg) {
         this.error_msg = error_msg;
-    }
-
-    public String getExpire() {
-        return expire;
-    }
-
-    public void setExpire(String expire) {
-        this.expire = expire;
     }
 
     public String getOnline_ip() {
@@ -97,5 +81,4 @@ public class GetChallengeResponse {
     public void setSt(int st) {
         this.st = st;
     }
-
 }

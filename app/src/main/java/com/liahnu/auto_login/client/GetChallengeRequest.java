@@ -5,20 +5,24 @@ import android.util.Log;
 import com.liahnu.auto_login.client.domain.GetChallengeResponse;
 import com.liahnu.auto_login.client.util.jQuerySerialization;
 
-import org.json.JSONObject;
-
+import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.json.JSON;
+import cn.hutool.json.JSONObject;
+import cn.hutool.json.JSONUtil;
 import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
-public class GetChallenge {
+public class GetChallengeRequest {
+
+    private static final String TAG = "GetChallengeRequest";
 
     /*
     GET /cgi-bin/get_challenge?callback=jQuery1124038630846526307305_1678337618278&username=2021440113**&ip=10.202.47.26&_=1678337618280
      */
 
-    public static String getChallenge(){
+    public static GetChallengeResponse getChallenge(String username,String ip){
         OkHttpClient client = new OkHttpClient();
         String nowTime = String.valueOf(System.currentTimeMillis());
 
@@ -29,8 +33,8 @@ public class GetChallenge {
                 .addPathSegment("cgi-bin")
                 .addPathSegment("get_challenge")
                 .addQueryParameter("callback", "jQuery1124038630846526307305_"+nowTime)
-                .addQueryParameter("username", "202144011301")
-                .addQueryParameter("ip", "10.202.47.26")
+                .addQueryParameter("username", username)
+                .addQueryParameter("ip", ip)
                 .addQueryParameter("_", nowTime )
                 .build();
 
@@ -45,18 +49,17 @@ public class GetChallenge {
             Response response = client.newCall(request).execute();
 
             if(response.body()==null){
-                return "";
+                return null;
             }
 
-            JSONObject jsonObject = jQuerySerialization.getQueryString(response.body().string());
-
-            GetChallengeResponse challengeResponse =  new GetChallengeResponse(jsonObject);
-
-            return challengeResponse.getChallenge();
+            String json = jQuerySerialization.getQueryString(response.body().string());
+            GetChallengeResponse challengeResponse = JSONUtil.toBean(json, GetChallengeResponse.class);
+            Log.i(TAG, "GetChallengeRequest: " + challengeResponse.toString());
+            return challengeResponse;
 
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return "";
+        return null;
     }
 }

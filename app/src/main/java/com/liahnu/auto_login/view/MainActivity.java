@@ -1,16 +1,11 @@
 package com.liahnu.auto_login.view;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
-import android.net.wifi.SupplicantState;
-import android.net.wifi.WifiInfo;
-import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.util.AndroidRuntimeException;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -25,13 +20,8 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.liahnu.auto_login.R;
-import com.liahnu.auto_login.client.GetChallenge;
-import com.liahnu.auto_login.client.domain.GetChallengeResponse;
+import com.liahnu.auto_login.client.GetChallengeRequest;
 import com.liahnu.auto_login.utilliiy.GetWifiInfo;
-
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
 
 public class MainActivity extends AppCompatActivity {
     private SharedPreferences pref;
@@ -152,8 +142,6 @@ public class MainActivity extends AppCompatActivity {
             try {
                 String account = accountEdit.getText().toString();
                 String password = passwordEdit.getText().toString();
-                String response = GetChallenge.getChallenge();
-                showResponse(response);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -162,9 +150,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void sendLogout() {
         new Thread(() -> {
-            try {
-                String response = GetChallenge.getChallenge();
-                showResponse(response);
+            try {;
             } catch (Exception e) {
                 e.printStackTrace();
             }
