@@ -25,6 +25,8 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.liahnu.auto_login.R;
+import com.liahnu.auto_login.client.GetChallenge;
+import com.liahnu.auto_login.client.domain.GetChallengeResponse;
 import com.liahnu.auto_login.utilliiy.GetWifiInfo;
 
 import okhttp3.OkHttpClient;
@@ -150,16 +152,8 @@ public class MainActivity extends AppCompatActivity {
             try {
                 String account = accountEdit.getText().toString();
                 String password = passwordEdit.getText().toString();
-                OkHttpClient client = new OkHttpClient();
-                String url = "http://10.200.132.20:801/eportal/portal/login?" + "user_account=" + account +
-                        "&user_password=" + password;
-                Request request = new Request.Builder()
-                        .url(url)
-                        .build();
-                Response response = client.newCall(request).execute();
-                assert response.body() != null;
-                String responseData = response.body().string();
-                showResponse(responseData);
+                String response = GetChallenge.getChallenge();
+                showResponse(response);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -169,14 +163,8 @@ public class MainActivity extends AppCompatActivity {
     private void sendLogout() {
         new Thread(() -> {
             try {
-                OkHttpClient client = new OkHttpClient();
-                Request request = new Request.Builder()
-                        .url("http://10.200.132.20:801/eportal/portal/logout?user_account=drcom&user_password=123")
-                        .build();
-                Response response = client.newCall(request).execute();
-                assert response.body() != null;
-                String responseData = response.body().string();
-                showResponse(responseData);
+                String response = GetChallenge.getChallenge();
+                showResponse(response);
             } catch (Exception e) {
                 e.printStackTrace();
             }
