@@ -1,13 +1,9 @@
 package com.liahnu.auto_login.view;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
-import android.net.wifi.SupplicantState;
-import android.net.wifi.WifiInfo;
-import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -18,18 +14,24 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Switch;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.liahnu.auto_login.R;
+import com.liahnu.auto_login.domain.Config;
+import com.liahnu.auto_login.domain.User;
+import com.liahnu.auto_login.utilliiy.copyElfs;
 
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 
 public class MainActivity extends AppCompatActivity {
+
+    private static final String TAG = "MainActivity";
     private SharedPreferences pref;
     private SharedPreferences.Editor editor;
     private EditText accountEdit;
@@ -39,6 +41,10 @@ public class MainActivity extends AppCompatActivity {
     private CheckBox rememberPass;
     private String responseText;
     private CheckBox loginPass;
+
+    private copyElfs ce;
+
+    private Config config;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,46 +61,67 @@ public class MainActivity extends AppCompatActivity {
         boolean isAutoLogin = pref.getBoolean("auto_login", false);
         boolean isRemember = pref.getBoolean("remember_password", false);
 
-        Toast.makeText(MainActivity.this, getSsid(), Toast.LENGTH_SHORT).show();
+        // 初始化文件
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+            ce = new copyElfs(getBaseContext());
+        }
+
+        if(ce!=null) {
+            ce.copyAll2Data();
+            config = ce.readConfig();
+            accountEdit.setText(config.getUsers().get(0).getUsername());
+            passwordEdit.setText(config.getUsers().get(0).getPassword());
+        }else{
+            showMessage("初始化失败");
+            Log.e(TAG, "获取文件失败");
+        }
 
         if (isRemember) {
-            String account = pref.getString("account", "");
-            String password = pref.getString("password", "");
-            accountEdit.setText(account);
-            passwordEdit.setText(password);
             rememberPass.setChecked(true);
         }
+
         if (isAutoLogin) {
             loginPass.setChecked(true);
-            sendLogin();
+            String s = callAccount(true);
+            showMessage(s);
         }
         button1.setOnClickListener(view -> {
             //判断按钮代码
-            //Toast.makeText(MainActivity.this,"Login",Toast.LENGTH_SHORT).show();
-            Log.d("MainActivity", "Click Save");
-            String account = accountEdit.getText().toString();
+            Log.d(TAG ,"Click Login");
+
+            String username = accountEdit.getText().toString();
             String password = passwordEdit.getText().toString();
-            sendLogin();
+
             editor = pref.edit();
-            if (loginPass.isChecked()) {
-                editor.putBoolean("auto_login", true);
-            } else {
-                editor.putBoolean("auto_login", false);
-            }
+            editor.putBoolean("auto_login", loginPass.isChecked());
+
             if (rememberPass.isChecked()) {
                 editor.putBoolean("remember_password", true);
-                editor.putString("account", account);
-                editor.putString("password", password);
+                // 保存用户信息
+                User user = new User();
+                user.setUsername(username);
+                user.setPassword(password);
+                config.getUsers().set(0,user);
+                ce.updateConfig(config);
             } else {
                 editor.clear();
             }
             editor.apply();
 
+            if(config.getUsers().get(0).getUsername()!=null||config.getUsers().get(0).getPassword()!=null) {
+                showMessage("保存成功");
+                String s = callAccount(true);
+                showMessage(s);
+            } else{
+                showMessage("保存失败");
+            }
+
         });
 
         button_logout.setOnClickListener(view -> {
-            Log.d("MainActivity", "Click Logout");
-            sendLogout();
+            Log.d(TAG, "Click Logout");
+            String s = callAccount(false);
+            showMessage(s);
         });
 
         autologin.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -108,12 +135,19 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+
+
     }
 
     @Override
     public boolean onCreatePanelMenu(int featureId, @NonNull Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
+    }
+
+    private void showMessage(String message){
+        TextView infoText = findViewById(R.id.info);
+        infoText.setText(message);
     }
 
     @SuppressLint("NonConstantResourceId")
@@ -128,12 +162,6 @@ public class MainActivity extends AppCompatActivity {
                 Intent intent_web = new Intent(MainActivity.this, WebView.class);
                 startActivity(intent_web);
                 break;
-            case R.id.internet:
-                Toast.makeText(this, "internet", Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(Intent.ACTION_VIEW);
-                intent.setData(Uri.parse("http://10.200.132.20/"));
-                startActivity(intent);
-                break;
             case R.id.Exit_item:
                 Toast.makeText(this, "Exit", Toast.LENGTH_SHORT).show();
                 finish();
@@ -143,67 +171,30 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
-    private void sendLogin() {
-        new Thread(() -> {
-            try {
-                String account = accountEdit.getText().toString();
-                String password = passwordEdit.getText().toString();
-                OkHttpClient client = new OkHttpClient();
-                String url = "http://10.200.132.20:801/eportal/portal/login?" + "user_account=" + account +
-                        "&user_password=" + password;
-                Request request = new Request.Builder()
-                        .url(url)
-                        .build();
-                Response response = client.newCall(request).execute();
-                assert response.body() != null;
-                String responseData = response.body().string();
-                showResponse(responseData);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }).start();
-    }
+    // 1登录 0注销
+    public String callAccount(boolean status){
+        Process p;
+        String tmptext;
+        String cmd = "srun";
+        String ConfigPath = "config.json";
+        String statusStr = status?"login":"logout";
+        StringBuilder execresult = new StringBuilder();
 
-    private void sendLogout() {
-        new Thread(() -> {
-            try {
-                OkHttpClient client = new OkHttpClient();
-                Request request = new Request.Builder()
-                        .url("http://10.200.132.20:801/eportal/portal/logout?user_account=drcom&user_password=123")
-                        .build();
-                Response response = client.newCall(request).execute();
-                assert response.body() != null;
-                String responseData = response.body().string();
-                showResponse(responseData);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }).start();
-    }
-
-
-
-    private void showResponse(final String response) {
-        runOnUiThread(() -> {
-            responseText = response;
-            Toast.makeText(MainActivity.this, response, Toast.LENGTH_SHORT).show();
-        });
-    }
-
-    private String getSsid() {
+        String path = "/system/bin/linker64 "+ce.getExecutableFilePath() + "/"+cmd +" login"
+                + " -c " +ce.getExecutableFilePath()+"/"+ConfigPath;
+        Log.i(TAG,path);
         try {
-            WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-            WifiInfo wifiInfo;
-            String ssid = null;
-            wifiInfo = wifiManager.getConnectionInfo();
-            if (wifiInfo.getSupplicantState() == SupplicantState.COMPLETED) {
-                ssid = wifiInfo.getSSID();
+            p = Runtime.getRuntime().exec(path);
+            BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
+            while ((tmptext = br.readLine()) != null) {
+                execresult.append(tmptext).append("\n");
             }
-            return ssid;
-        }catch (RuntimeException e){
-            Toast.makeText(this,"未链接wifi活未知错误",Toast.LENGTH_SHORT).show();
-            Log.e("Wifi",e.toString());
+        }catch (IOException e){
+            Log.i(TAG,e.toString());
         }
-        return null;
+        Log.i(TAG,execresult.toString());
+        return execresult.toString();
     }
+
+
 }
