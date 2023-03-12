@@ -179,9 +179,17 @@ public class MainActivity extends AppCompatActivity {
         String ConfigPath = "config.json";
         String statusStr = status?"login":"logout";
         StringBuilder execresult = new StringBuilder();
+        String path = "";
 
-        String path = "/system/bin/linker64 "+ce.getExecutableFilePath() + "/"+cmd +" login"
-                + " -c " +ce.getExecutableFilePath()+"/"+ConfigPath;
+        if (statusStr.equals("login")) {
+            path = "/system/bin/linker64 " + ce.getExecutableFilePath() + "/" + cmd + " login"
+                    + " -c " + ce.getExecutableFilePath() + "/" + ConfigPath;
+        }
+        else{
+            path = "/system/bin/linker64 "+ce.getExecutableFilePath() + "/"+ cmd +" logout -u "
+                    + config.getUsers().get(0).getUsername() + " -d -s http://10.129.1.1";
+        }
+
         Log.i(TAG,path);
         try {
             p = Runtime.getRuntime().exec(path);
