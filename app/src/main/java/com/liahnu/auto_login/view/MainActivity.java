@@ -120,7 +120,9 @@ public class MainActivity extends AppCompatActivity {
 
         button_logout.setOnClickListener(view -> {
             Log.d(TAG, "Click Logout");
-            String s = callAccount(false);
+            //String s = callAccount(false);
+            String username = accountEdit.getText().toString();
+            String s = uncallAccount(username);
             showMessage(s);
         });
 
@@ -182,6 +184,28 @@ public class MainActivity extends AppCompatActivity {
 
         String path = "/system/bin/linker64 "+ce.getExecutableFilePath() + "/"+cmd +" login"
                 + " -c " +ce.getExecutableFilePath()+"/"+ConfigPath;
+        Log.i(TAG,path);
+        try {
+            p = Runtime.getRuntime().exec(path);
+            BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
+            while ((tmptext = br.readLine()) != null) {
+                execresult.append(tmptext).append("\n");
+            }
+        }catch (IOException e){
+            Log.i(TAG,e.toString());
+        }
+        Log.i(TAG,execresult.toString());
+        return execresult.toString();
+    }
+
+    public String uncallAccount(String account){
+        Process p;
+        String tmptext;
+        String cmd = "srun";
+        StringBuilder execresult = new StringBuilder();
+
+        String path = "/system/bin/linker64 "+ce.getExecutableFilePath() + "/"+cmd +" logout -u "
+                + account + " -d -s http://10.129.1.1";
         Log.i(TAG,path);
         try {
             p = Runtime.getRuntime().exec(path);
