@@ -82,7 +82,7 @@ public class MainActivity extends AppCompatActivity {
 
         if (isAutoLogin) {
             loginPass.setChecked(true);
-            String s = callAccount(true);
+            String s = callAccount(true,"");
             showMessage(s);
         }
         button1.setOnClickListener(view -> {
@@ -110,7 +110,7 @@ public class MainActivity extends AppCompatActivity {
 
             if(config.getUsers().get(0).getUsername()!=null||config.getUsers().get(0).getPassword()!=null) {
                 showMessage("保存成功");
-                String s = callAccount(true);
+                String s = callAccount(true,"");
                 showMessage(s);
             } else{
                 showMessage("保存失败");
@@ -122,7 +122,7 @@ public class MainActivity extends AppCompatActivity {
             Log.d(TAG, "Click Logout");
             //String s = callAccount(false);
             String username = accountEdit.getText().toString();
-            String s = uncallAccount(username);
+            String s = callAccount(false,username);
             showMessage(s);
         });
 
@@ -174,38 +174,24 @@ public class MainActivity extends AppCompatActivity {
     }
 
     // 1登录 0注销
-    public String callAccount(boolean status){
+    public String callAccount(boolean status,String username){
         Process p;
         String tmptext;
         String cmd = "srun";
         String ConfigPath = "config.json";
         String statusStr = status?"login":"logout";
         StringBuilder execresult = new StringBuilder();
+        String path = "";
 
-        String path = "/system/bin/linker64 "+ce.getExecutableFilePath() + "/"+cmd +" login"
-                + " -c " +ce.getExecutableFilePath()+"/"+ConfigPath;
-        Log.i(TAG,path);
-        try {
-            p = Runtime.getRuntime().exec(path);
-            BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
-            while ((tmptext = br.readLine()) != null) {
-                execresult.append(tmptext).append("\n");
-            }
-        }catch (IOException e){
-            Log.i(TAG,e.toString());
+        if (statusStr.equals("login")) {
+            path = "/system/bin/linker64 " + ce.getExecutableFilePath() + "/" + cmd + " login"
+                    + " -c " + ce.getExecutableFilePath() + "/" + ConfigPath;
         }
-        Log.i(TAG,execresult.toString());
-        return execresult.toString();
-    }
+        else{
+            path = "/system/bin/linker64 "+ce.getExecutableFilePath() + "/"+ cmd +" logout -u "
+                    + username + " -d -s http://10.129.1.1";
+        }
 
-    public String uncallAccount(String account){
-        Process p;
-        String tmptext;
-        String cmd = "srun";
-        StringBuilder execresult = new StringBuilder();
-
-        String path = "/system/bin/linker64 "+ce.getExecutableFilePath() + "/"+cmd +" logout -u "
-                + account + " -d -s http://10.129.1.1";
         Log.i(TAG,path);
         try {
             p = Runtime.getRuntime().exec(path);
