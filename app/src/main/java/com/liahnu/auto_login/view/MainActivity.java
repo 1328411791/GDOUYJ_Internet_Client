@@ -120,8 +120,6 @@ public class MainActivity extends AppCompatActivity {
 
         button_logout.setOnClickListener(view -> {
             Log.d(TAG, "Click Logout");
-            //String s = callAccount(false);
-            String username = accountEdit.getText().toString();
             String s = callAccount(false);
             showMessage(s);
         });
