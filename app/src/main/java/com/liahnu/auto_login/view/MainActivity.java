@@ -82,7 +82,7 @@ public class MainActivity extends AppCompatActivity {
 
         if (isAutoLogin) {
             loginPass.setChecked(true);
-            String s = callAccount(true,"");
+            String s = callAccount(true);
             showMessage(s);
         }
         button1.setOnClickListener(view -> {
@@ -110,7 +110,7 @@ public class MainActivity extends AppCompatActivity {
 
             if(config.getUsers().get(0).getUsername()!=null||config.getUsers().get(0).getPassword()!=null) {
                 showMessage("保存成功");
-                String s = callAccount(true,"");
+                String s = callAccount(true);
                 showMessage(s);
             } else{
                 showMessage("保存失败");
@@ -122,7 +122,7 @@ public class MainActivity extends AppCompatActivity {
             Log.d(TAG, "Click Logout");
             //String s = callAccount(false);
             String username = accountEdit.getText().toString();
-            String s = callAccount(false,username);
+            String s = callAccount(false);
             showMessage(s);
         });
 
@@ -174,7 +174,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     // 1登录 0注销
-    public String callAccount(boolean status,String username){
+    public String callAccount(boolean status){
         Process p;
         String tmptext;
         String cmd = "srun";
@@ -189,7 +189,7 @@ public class MainActivity extends AppCompatActivity {
         }
         else{
             path = "/system/bin/linker64 "+ce.getExecutableFilePath() + "/"+ cmd +" logout -u "
-                    + username + " -d -s http://10.129.1.1";
+                    + config.getUsers().get(0).getUsername() + " -d -s http://10.129.1.1";
         }
 
         Log.i(TAG,path);
