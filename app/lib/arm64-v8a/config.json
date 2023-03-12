@@ -11,8 +11,8 @@
   "name": "Smartphones/PDAs/Tablets",
   "users": [
     {
-      "username": "202144011301",
-      "password": "1234567890",
+      "username": "",
+      "password": "",
       "if_name": "wlan0"
     }
   ]

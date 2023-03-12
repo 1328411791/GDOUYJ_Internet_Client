@@ -3,7 +3,7 @@ package com.liahnu.auto_login.domain;
 public class User {
     private String username;
     private String password;
-    private String if_name;
+    private String if_name = "wlan0";
 
     public String getUsername() {
         return username;

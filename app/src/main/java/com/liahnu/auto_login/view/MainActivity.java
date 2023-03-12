@@ -14,16 +14,14 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Switch;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.liahnu.auto_login.R;
-import com.liahnu.auto_login.client.GetChallengeRequest;
 import com.liahnu.auto_login.domain.Config;
-import com.liahnu.auto_login.utilliiy.GetWifiInfo;
+import com.liahnu.auto_login.domain.User;
 import com.liahnu.auto_login.utilliiy.copyElfs;
 
 import java.io.BufferedReader;
@@ -45,6 +43,8 @@ public class MainActivity extends AppCompatActivity {
 
     private copyElfs ce;
 
+    private Config config;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,48 +59,68 @@ public class MainActivity extends AppCompatActivity {
         Button button_logout = findViewById(R.id.button_logout);
         boolean isAutoLogin = pref.getBoolean("auto_login", false);
         boolean isRemember = pref.getBoolean("remember_password", false);
-        Toast.makeText(MainActivity.this, GetWifiInfo.getSsid(getApplicationContext()),
-                Toast.LENGTH_SHORT).show();
+
+        // 初始化文件
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+            ce = new copyElfs(getBaseContext());
+        }
+
+        if(ce!=null) {
+            ce.copyAll2Data();
+            config = ce.readConfig();
+            ce.updateConfig(config);
+            accountEdit.setText(config.getUsers().get(0).getUsername());
+            passwordEdit.setText(config.getUsers().get(0).getPassword());
+        }else{
+            showMessage("初始化失败");
+            Log.e(TAG, "获取文件失败");
+        }
 
         if (isRemember) {
-            String account = pref.getString("account", "");
-            String password = pref.getString("password", "");
-            accountEdit.setText(account);
-            passwordEdit.setText(password);
             rememberPass.setChecked(true);
         }
+
         if (isAutoLogin) {
             loginPass.setChecked(true);
-            sendLogin();
+            String s = callAccount(true);
+            showMessage(s);
         }
         button1.setOnClickListener(view -> {
             //判断按钮代码
-            //Toast.makeText(MainActivity.this,"Login",Toast.LENGTH_SHORT).show();
-            Log.d("MainActivity", "Click Save");
-            String account = accountEdit.getText().toString();
+            Log.d(TAG ,"Click Login");
+
+            String username = accountEdit.getText().toString();
             String password = passwordEdit.getText().toString();
-            sendLogin();
+
             editor = pref.edit();
-            if (loginPass.isChecked()) {
-                editor.putBoolean("auto_login", true);
-            } else {
-                editor.putBoolean("auto_login", false);
-            }
+            editor.putBoolean("auto_login", loginPass.isChecked());
+
             if (rememberPass.isChecked()) {
                 editor.putBoolean("remember_password", true);
-                editor.putString("account", account);
-                editor.putString("password", password);
+                // 保存用户信息
+                User user = new User();
+                user.setUsername(username);
+                user.setPassword(password);
+                config.getUsers().set(0,user);
+                ce.updateConfig(config);
             } else {
                 editor.clear();
             }
             editor.apply();
 
+            if(config.getUsers().get(0).getUsername()!=null||config.getUsers().get(0).getPassword()!=null) {
+                showMessage("保存成功");
+                String s = callAccount(true);
+                showMessage(s);
+            } else{
+                showMessage("保存失败");
+            }
+
         });
 
         button_logout.setOnClickListener(view -> {
-            Log.d("MainActivity", "Click Logout");
-            String s = callElf("srun","config.json");
-            Log.i(TAG,s);
+            Log.d(TAG, "Click Logout");
+            String s = callAccount(false);
             Toast.makeText(MainActivity.this, s, Toast.LENGTH_LONG).show();
         });
 
@@ -115,22 +135,18 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // 初始化文件
-        ce = null;
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-            ce = new copyElfs(getBaseContext());
-        }
-        if(ce!=null) {
-            ce.copyAll2Data();
-            Config config = ce.readConfig();
-            ce.updateConfig(config);
-        }
+
+
     }
 
     @Override
     public boolean onCreatePanelMenu(int featureId, @NonNull Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
+    }
+
+    private void showMessage(String message){
+        Toast.makeText(this, message, Toast.LENGTH_LONG).show();
     }
 
     @SuppressLint("NonConstantResourceId")
@@ -160,38 +176,13 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
-    private void sendLogin() {
-        new Thread(() -> {
-            try {
-                String account = accountEdit.getText().toString();
-                String password = passwordEdit.getText().toString();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }).start();
-    }
-
-    private void sendLogout() {
-        new Thread(() -> {
-            try {;
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }).start();
-    }
-
-
-
-    private void showResponse(final String response) {
-        runOnUiThread(() -> {
-            responseText = response;
-            Toast.makeText(MainActivity.this, response, Toast.LENGTH_SHORT).show();
-        });
-    }
-
-    public String callElf(String cmd,String ConfigPath){
+    // 1登录 0注销
+    public String callAccount(boolean status){
         Process p;
         String tmptext;
+        String cmd = "srun";
+        String ConfigPath = "config.json";
+        String statusStr = status?"login":"logout";
         StringBuilder execresult = new StringBuilder();
 
         String path = "/system/bin/linker64 "+ce.getExecutableFilePath() + "/"+cmd +" login"
@@ -206,6 +197,7 @@ public class MainActivity extends AppCompatActivity {
         }catch (IOException e){
             Log.i(TAG,e.toString());
         }
+        Log.i(TAG,execresult.toString());
         return execresult.toString();
     }
 
