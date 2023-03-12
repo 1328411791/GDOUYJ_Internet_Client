@@ -12,4 +12,6 @@
     <string name="webview">WebView</string>
     <string name="logout">退出</string>
     <string name="auto_login">开启应用后自动登录</string>
+    <string name="LoginConfig">登录参数设置</string>
+    <string name="strict_bind">strict_bind</string>
 </resources>

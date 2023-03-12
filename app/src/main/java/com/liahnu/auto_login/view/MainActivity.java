@@ -14,6 +14,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Switch;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -121,7 +122,7 @@ public class MainActivity extends AppCompatActivity {
         button_logout.setOnClickListener(view -> {
             Log.d(TAG, "Click Logout");
             String s = callAccount(false);
-            Toast.makeText(MainActivity.this, s, Toast.LENGTH_LONG).show();
+            showMessage(s);
         });
 
         autologin.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -146,7 +147,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void showMessage(String message){
-        Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+        TextView infoText = findViewById(R.id.info);
+        infoText.setText(message);
     }
 
     @SuppressLint("NonConstantResourceId")

@@ -19,13 +19,20 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="@string/LoginConfig"
+                android:textSize="24sp"
+                android:textStyle="bold" />
             <Switch
                 android:id="@+id/setting1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:minHeight="48dp"
-                android:text="no_use"
-                android:textSize="18sp"
+                android:text="@string/strict_bind"
+                android:textSize="20sp"
                 tools:ignore="UseSwitchCompatOrMaterialXml" />
 
             <Switch
@@ -33,8 +40,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:minHeight="48dp"
-                android:text="no_use"
-                android:textSize="18sp"
+                android:text="@string/double_stack"
+                android:textSize="20sp"
                 tools:ignore="UseSwitchCompatOrMaterialXml" />
 
         </LinearLayout>

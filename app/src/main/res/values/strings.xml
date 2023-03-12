@@ -10,5 +10,8 @@
     <string name="remember_password">Remember password</string>
     <string name="webview">WebView</string>
     <string name="logout">Logout</string>
-    <string name="auto_login">开启应用后自动登录</string>
+    <string name="auto_login">auto Login</string>
+    <string name="LoginConfig">Login Config</string>
+    <string name="strict_bind">strict_bind</string>
+    <string name="double_stack">double_stack</string>
 </resources>
