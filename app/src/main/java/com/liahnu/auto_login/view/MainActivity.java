@@ -161,12 +161,6 @@ public class MainActivity extends AppCompatActivity {
                 Intent intent_web = new Intent(MainActivity.this, WebView.class);
                 startActivity(intent_web);
                 break;
-            case R.id.internet:
-                Toast.makeText(this, "internet", Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(Intent.ACTION_VIEW);
-                intent.setData(Uri.parse("http://10.200.132.20/"));
-                startActivity(intent);
-                break;
             case R.id.Exit_item:
                 Toast.makeText(this, "Exit", Toast.LENGTH_SHORT).show();
                 finish();
