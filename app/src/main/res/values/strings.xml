@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Auto_Login</string>
+    <string name="app_name">GDOU Internet Auth</string>
     <string name="password">PassWord</string>
     <string name="user_login">User Login</string>
     <string name="user_name">User_name</string>
@@ -7,7 +7,6 @@
     <string name="button2">Login</string>
     <string name="setting">Setting</string>
     <string name="exit">Exit</string>
-    <string name="internet">Internet</string>
     <string name="remember_password">Remember password</string>
     <string name="webview">WebView</string>
     <string name="logout">Logout</string>
