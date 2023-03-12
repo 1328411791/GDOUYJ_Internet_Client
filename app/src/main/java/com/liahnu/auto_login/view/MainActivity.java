@@ -14,6 +14,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Switch;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -21,9 +22,17 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.liahnu.auto_login.R;
 import com.liahnu.auto_login.client.GetChallengeRequest;
+import com.liahnu.auto_login.domain.Config;
 import com.liahnu.auto_login.utilliiy.GetWifiInfo;
+import com.liahnu.auto_login.utilliiy.copyElfs;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 
 public class MainActivity extends AppCompatActivity {
+
+    private static final String TAG = "MainActivity";
     private SharedPreferences pref;
     private SharedPreferences.Editor editor;
     private EditText accountEdit;
@@ -33,6 +42,8 @@ public class MainActivity extends AppCompatActivity {
     private CheckBox rememberPass;
     private String responseText;
     private CheckBox loginPass;
+
+    private copyElfs ce;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,7 +99,9 @@ public class MainActivity extends AppCompatActivity {
 
         button_logout.setOnClickListener(view -> {
             Log.d("MainActivity", "Click Logout");
-            sendLogout();
+            String s = callElf("srun","config.json");
+            Log.i(TAG,s);
+            Toast.makeText(MainActivity.this, s, Toast.LENGTH_LONG).show();
         });
 
         autologin.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -102,6 +115,16 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        // 初始化文件
+        ce = null;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+            ce = new copyElfs(getBaseContext());
+        }
+        if(ce!=null) {
+            ce.copyAll2Data();
+            Config config = ce.readConfig();
+            ce.updateConfig(config);
+        }
     }
 
     @Override
@@ -164,6 +187,26 @@ public class MainActivity extends AppCompatActivity {
             responseText = response;
             Toast.makeText(MainActivity.this, response, Toast.LENGTH_SHORT).show();
         });
+    }
+
+    public String callElf(String cmd,String ConfigPath){
+        Process p;
+        String tmptext;
+        StringBuilder execresult = new StringBuilder();
+
+        String path = "/system/bin/linker64 "+ce.getExecutableFilePath() + "/"+cmd +" login"
+                + " -c " +ce.getExecutableFilePath()+"/"+ConfigPath;
+        Log.i(TAG,path);
+        try {
+            p = Runtime.getRuntime().exec(path);
+            BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
+            while ((tmptext = br.readLine()) != null) {
+                execresult.append(tmptext).append("\n");
+            }
+        }catch (IOException e){
+            Log.i(TAG,e.toString());
+        }
+        return execresult.toString();
     }
 
 

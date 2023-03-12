@@ -15,6 +15,12 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    sourceSets {
+        main{
+            assets.srcDirs 'lib/'
+        }
+    }
+
     buildTypes {
         release {
             minifyEnabled false
@@ -39,5 +45,6 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
     implementation 'com.squareup.okhttp3:okhttp:4.1.0'
     implementation 'cn.hutool:hutool-all:5.8.15'
+    implementation 'com.google.code.gson:gson:2.8.9'
 
 }
