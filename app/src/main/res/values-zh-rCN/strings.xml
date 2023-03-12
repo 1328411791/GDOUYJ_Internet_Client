@@ -14,4 +14,6 @@
     <string name="auto_login">开启应用后自动登录</string>
     <string name="LoginConfig">登录参数设置</string>
     <string name="strict_bind">strict_bind</string>
+    <string name="openSource1">https://github.com/zu1k/srun \n zu1k</string>
+    <string name="AboutOpenSource">开源相关</string>
 </resources>

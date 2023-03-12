@@ -24,10 +24,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:text="@string/LoginConfig"
+                android:textColor="#000000"
                 android:textSize="24sp"
                 android:textStyle="bold" />
             <Switch
-                android:id="@+id/setting1"
+                android:id="@+id/strict_bind"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:minHeight="48dp"
@@ -36,7 +37,7 @@
                 tools:ignore="UseSwitchCompatOrMaterialXml" />
 
             <Switch
-                android:id="@+id/setting2"
+                android:id="@+id/double_stack"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:minHeight="48dp"
@@ -44,7 +45,21 @@
                 android:textSize="20sp"
                 tools:ignore="UseSwitchCompatOrMaterialXml" />
 
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/AboutOpenSource"
+                android:textColor="#000000"
+                android:textSize="24sp"
+                android:textStyle="bold" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/openSource1"/>
+
         </LinearLayout>
+
+
 
     </ScrollView>
 

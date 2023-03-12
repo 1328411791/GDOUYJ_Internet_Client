@@ -14,4 +14,6 @@
     <string name="LoginConfig">Login Config</string>
     <string name="strict_bind">strict_bind</string>
     <string name="double_stack">double_stack</string>
+    <string name="openSource1">https://github.com/zu1k/srun \n zu1k</string>
+    <string name="AboutOpenSource">开源相关</string>
 </resources>

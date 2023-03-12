@@ -69,7 +69,6 @@ public class MainActivity extends AppCompatActivity {
         if(ce!=null) {
             ce.copyAll2Data();
             config = ce.readConfig();
-            ce.updateConfig(config);
             accountEdit.setText(config.getUsers().get(0).getUsername());
             passwordEdit.setText(config.getUsers().get(0).getPassword());
         }else{
