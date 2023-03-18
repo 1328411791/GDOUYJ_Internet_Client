@@ -1,5 +1,7 @@
 package com.liahnu.auto_login.client;
 
+import android.util.Log;
+
 import com.google.gson.Gson;
 
 import java.io.IOException;
