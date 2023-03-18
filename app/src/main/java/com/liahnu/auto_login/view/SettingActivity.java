@@ -7,6 +7,7 @@ import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Button;
 import android.widget.Switch;
 import android.widget.Toast;
 
@@ -26,24 +27,17 @@ public class SettingActivity extends AppCompatActivity {
     private static final String TAG = "SettingActivity";
 
     @SuppressLint("UseSwitchCompatOrMaterialCode")
-    Switch strictBind;
+    private Switch strictBind =findViewById(R.id.double_stack);
+
     @SuppressLint("UseSwitchCompatOrMaterialCode")
-    Switch  double_stack;
+    private Switch  double_stack =findViewById(R.id.strict_bind);;
+
+    private Button checkUpdate = findViewById(R.id.check_update);
 
     private copyElfs ce;
     private Config config;
 
     private void initConfig(){
-        strictBind = findViewById(R.id.strict_bind);
-        double_stack = findViewById(R.id.double_stack);
-    }
-
-    @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_setting);
-        initConfig();
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             ce = new copyElfs(getBaseContext());
         }
@@ -53,8 +47,21 @@ public class SettingActivity extends AppCompatActivity {
         }else{
             Log.e(TAG, "获取文件失败");
         }
+    }
 
-        // 检测两个Switch是否被更改
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_setting);
+        initConfig();
+
+        checkUpdate.setOnClickListener(view -> {
+            Log.i(TAG, "检查更新");
+            checkUpdate();
+        });
+
+
+
 
     }
 
@@ -69,9 +76,6 @@ public class SettingActivity extends AppCompatActivity {
             Log.e(TAG,"检查更新失败");
             throw new RuntimeException(e);
         }
-
-
-
     }
 
 }

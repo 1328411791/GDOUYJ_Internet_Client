@@ -34,7 +34,7 @@ public class WebView extends AppCompatActivity {
                 try {
                     OkHttpClient client =new OkHttpClient();
                     Request request = new Request.Builder()
-                            .url("http://10.200.132.20:801/eportal/portal/login?user_account=202144011308&user_password=05261x")
+                            .url("http://10.200.132.20:801/eportal/portal/login")
                             .build();
                     Response response = client.newCall(request).execute();
                     String responseData = response.body().string();
