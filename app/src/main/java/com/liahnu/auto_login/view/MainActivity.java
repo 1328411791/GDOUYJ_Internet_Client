@@ -16,6 +16,7 @@ import android.widget.EditText;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.os.StrictMode;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -28,6 +29,15 @@ import com.liahnu.auto_login.utilliiy.copyElfs;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.regex.*;
+import java.util.Map;
+import java.io.File;
+
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -50,6 +60,10 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        if (android.os.Build.VERSION.SDK_INT > 9) {
+            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+            StrictMode.setThreadPolicy(policy);
+        }
         pref = PreferenceManager.getDefaultSharedPreferences(this);
         accountEdit = findViewById(R.id.User);
         passwordEdit = findViewById(R.id.Password);
@@ -192,6 +206,7 @@ public class MainActivity extends AppCompatActivity {
 
         Log.i(TAG,path);
         try {
+            getAcid();
             p = Runtime.getRuntime().exec(path);
             BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
             while ((tmptext = br.readLine()) != null) {
@@ -204,5 +219,62 @@ public class MainActivity extends AppCompatActivity {
         return execresult.toString();
     }
 
+    public String getAcid(){
+        String acid;
+        String execresult;
+        String jsonpath = ce.getExecutableFilePath() + "/config.json";
+        ObjectMapper objectMapper = new ObjectMapper();
 
+        // 读取JSON文件并转换为Map对象
+        Map<String, Object> data = null;
+        try {
+            data = objectMapper.readValue(new File(jsonpath), Map.class);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        OkHttpClient client = new OkHttpClient();
+        Request request = new Request.Builder()
+                .url("http://connect.rom.miui.com/generate_204")
+                .header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.5563.65 Safari/537.36")
+                .header("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9")
+                .header("Accept-Encoding", "gzip, deflate")
+                .header("Accept-Language", "zh-CN,zh;q=0.9")
+                .header("Connection", "close")
+                .build();
+
+        try{
+            Response response = client.newCall(request).execute();
+            if (response.code() == 200) {
+                String meta_refresh_url = response.body().string().split("URL=")[1].split("\"")[0];
+                Request redirectRequest = new Request.Builder().url(meta_refresh_url).build();
+                Response redirectResponse = client.newCall(redirectRequest).execute();
+                String redirected_url = redirectResponse.request().url().toString();
+                Pattern pattern = Pattern.compile("ac_id=\\d+");
+                Matcher matcher = pattern.matcher(redirected_url);
+                if (matcher.find()) {
+                    acid = matcher.group().split("=")[1];
+                    data.put("acid", Integer.parseInt(acid));
+                    execresult = "Refresh! Ac_id is " + acid;
+
+                }else{
+                    execresult = "Could not find ac_id in the url, you may be redirected into a wrong page";
+                }
+            } else {
+                execresult = "Connected to the network with the status code " + response.code();
+            }
+        }catch (IOException e) {
+            e.printStackTrace();
+            execresult = "Failed to connected to network.";
+        }
+
+        // 将修改后的Map对象转换回JSON格式并写入文件
+        try {
+            objectMapper.writeValue(new File(jsonpath), data);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        return execresult; //需要放入运行结果
+    }
 }
