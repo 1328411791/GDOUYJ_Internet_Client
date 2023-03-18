@@ -16,4 +16,5 @@
     <string name="strict_bind">strict_bind</string>
     <string name="openSource1">https://github.com/zu1k/srun \n zu1k</string>
     <string name="AboutOpenSource">开源相关</string>
+    <string name="check_update">检测更新</string>
 </resources>
