@@ -187,7 +187,7 @@ public class MainActivity extends AppCompatActivity {
         }
         else{
             path = "/system/bin/linker64 "+ce.getExecutableFilePath() + "/"+ cmd +" logout -u "
-                    + config.getUsers().get(0).getUsername() + " -d -s http://10.129.1.1";
+                    + config.getUsers().get(0).getUsername() + " -d -s "+config.getServer();
         }
 
         Log.i(TAG,path);
