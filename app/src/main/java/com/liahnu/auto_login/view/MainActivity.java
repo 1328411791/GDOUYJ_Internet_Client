@@ -36,6 +36,8 @@ public class MainActivity extends AppCompatActivity {
     private SharedPreferences.Editor editor;
     private EditText accountEdit;
     private EditText passwordEdit;
+
+    private TextView infoTextView;
     @SuppressLint("UseSwitchCompatOrMaterialCode")
     private Switch autologin;
     private CheckBox rememberPass;
@@ -56,6 +58,7 @@ public class MainActivity extends AppCompatActivity {
         rememberPass = findViewById(R.id.remember_pass);
         autologin = findViewById(R.id.Auto_Login);
         loginPass = findViewById(R.id.auto_login);
+        infoTextView = findViewById(R.id.info);
         Button button1 = findViewById(R.id.button_login);
         Button button_logout = findViewById(R.id.button_logout);
         boolean isAutoLogin = pref.getBoolean("auto_login", false);
@@ -82,8 +85,7 @@ public class MainActivity extends AppCompatActivity {
 
         if (isAutoLogin) {
             loginPass.setChecked(true);
-            String s = callAccount(true);
-            showMessage(s);
+            callAccount(true);
         }
         button1.setOnClickListener(view -> {
             //判断按钮代码
@@ -95,33 +97,29 @@ public class MainActivity extends AppCompatActivity {
             editor = pref.edit();
             editor.putBoolean("auto_login", loginPass.isChecked());
 
-            if (rememberPass.isChecked()) {
-                editor.putBoolean("remember_password", true);
-                // 保存用户信息
-                User user = new User();
-                user.setUsername(username);
-                user.setPassword(password);
-                config.getUsers().set(0,user);
-                ce.updateConfig(config);
-            } else {
-                editor.clear();
-            }
+            // 保存用户信息
+            editor.putBoolean("remember_password", true);
+            // 保存用户信息
+            User user = new User();
+            user.setUsername(username);
+            user.setPassword(password);
+            config.getUsers().set(0,user);
+            ce.updateConfig(config);
+
             editor.apply();
 
             if(config.getUsers().get(0).getUsername()!=null||config.getUsers().get(0).getPassword()!=null) {
-                showMessage("保存成功");
-                String s = callAccount(true);
-                showMessage(s);
+               Toast.makeText(MainActivity.this, "保存成功", Toast.LENGTH_SHORT).show();
+               callAccount(true);
             } else{
-                showMessage("保存失败");
+                Toast.makeText(MainActivity.this, "保存失败", Toast.LENGTH_SHORT).show();
             }
 
         });
 
         button_logout.setOnClickListener(view -> {
             Log.d(TAG, "Click Logout");
-            String s = callAccount(false);
-            showMessage(s);
+            callAccount(false);
         });
 
         autologin.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -134,9 +132,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
-
-
-
     }
 
     @Override
@@ -146,8 +141,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void showMessage(String message){
-        TextView infoText = findViewById(R.id.info);
-        infoText.setText(message);
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Log.d(TAG,message);
+                infoTextView.setText(message);
+            }
+        });
     }
 
     @SuppressLint("NonConstantResourceId")
@@ -172,37 +172,42 @@ public class MainActivity extends AppCompatActivity {
     }
 
     // 1登录 0注销
-    public String callAccount(boolean status){
-        Process p;
-        String tmptext;
-        String cmd = "srun";
-        String ConfigPath = "config.json";
-        String statusStr = status?"login":"logout";
-        StringBuilder execresult = new StringBuilder();
-        String path = "";
+    private void callAccount(boolean status) {
+        new  Thread(new Runnable() {
+            @Override
+            public void run() {
+                Process p;
+                String tmptext;
+                String cmd = "srun";
+                String ConfigPath = "config.json";
+                String statusStr = status ? "login" : "logout";
+                StringBuilder execreSult = new StringBuilder();
+                String path = "";
 
-        if (statusStr.equals("login")) {
-            path = "/system/bin/linker64 " + ce.getExecutableFilePath() + "/" + cmd + " login"
-                    + " -c " + ce.getExecutableFilePath() + "/" + ConfigPath;
-        }
-        else{
-            path = "/system/bin/linker64 "+ce.getExecutableFilePath() + "/"+ cmd +" logout -u "
-                    + config.getUsers().get(0).getUsername() + " -d -s "+config.getServer();
-        }
+                if (statusStr.equals("login")) {
+                    path = "/system/bin/linker64 " + ce.getExecutableFilePath() + "/" + cmd + " login"
+                            + " -c " + ce.getExecutableFilePath() + "/" + ConfigPath;
+                } else {
+                    path = "/system/bin/linker64 " + ce.getExecutableFilePath() + "/" + cmd + " logout -u "
+                            + config.getUsers().get(0).getUsername() + " -d -s " + config.getServer();
+                }
 
-        Log.i(TAG,path);
-        try {
-            p = Runtime.getRuntime().exec(path);
-            BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
-            while ((tmptext = br.readLine()) != null) {
-                execresult.append(tmptext).append("\n");
+                Log.i(TAG, path);
+                try {
+                    p = Runtime.getRuntime().exec(path);
+                    BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
+                    while ((tmptext = br.readLine()) != null) {
+                        execreSult.append(tmptext).append("\n");
+                    }
+                } catch (IOException e) {
+                    Log.i(TAG, e.toString());
+                }
+                Log.i(TAG, execreSult.toString());
+                showMessage(execreSult.toString());
             }
-        }catch (IOException e){
-            Log.i(TAG,e.toString());
-        }
-        Log.i(TAG,execresult.toString());
-        return execresult.toString();
-    }
 
+
+        }).start();
+    }
 
 }
