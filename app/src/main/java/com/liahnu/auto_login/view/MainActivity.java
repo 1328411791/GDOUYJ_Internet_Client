@@ -3,7 +3,6 @@ package com.liahnu.auto_login.view;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -21,6 +20,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.liahnu.auto_login.R;
+import com.liahnu.auto_login.client.QueryAcidClient;
 import com.liahnu.auto_login.domain.Config;
 import com.liahnu.auto_login.domain.User;
 import com.liahnu.auto_login.utilliiy.copyElfs;
@@ -28,11 +28,6 @@ import com.liahnu.auto_login.utilliiy.copyElfs;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-
-import cn.hutool.core.util.StrUtil;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -91,6 +86,7 @@ public class MainActivity extends AppCompatActivity {
         if (isAutoLogin) {
             loginPass.setChecked(true);
             callAccount(true);
+            Toast.makeText(MainActivity.this, "开始自动登录...", Toast.LENGTH_SHORT).show();
         }
         button1.setOnClickListener(view -> {
             //判断按钮代码
@@ -192,37 +188,21 @@ public class MainActivity extends AppCompatActivity {
                 if (statusStr.equals("login")) {
                     path = "/system/bin/linker64 " + ce.getExecutableFilePath() + "/" + cmd + " login"
                             + " -c " + ce.getExecutableFilePath() + "/" + ConfigPath;
-                    try {
-                        String id;
-                        OkHttpClient client = new OkHttpClient();
-                        Request request = new Request.Builder().url("http://8.8.8.8").get().build();
-                        Response response = client.newCall(request).execute();
-                        String url = response.request().url().toString();
-                        Uri uri = Uri.parse(url);
-                        id = uri.getQueryParameter("ac_id");
-                        if (StrUtil.isBlank(id)) {
-                            String body = response.body().string();
-                            int begin = body.indexOf("/index_") + 7;
-                            int end = body.indexOf(".html", begin);
-                            id = body.substring(begin, end);
-                        }
-                        if (!StrUtil.isBlank(id)) {
-                            config.setAcid(Integer.parseInt(id));
-                        }
-                    } catch (IOException e) {
-                        Log.i(TAG, e.toString());
-                    } catch (NullPointerException e){
-                        Log.i(TAG, e.toString());
-                    } catch (NumberFormatException e) {
-
-                    };
-
                 } else {
                     path = "/system/bin/linker64 " + ce.getExecutableFilePath() + "/" + cmd + " logout -u "
                             + config.getUsers().get(0).getUsername() + " -d -s " + config.getServer();
                 }
 
                 Log.i(TAG, path);
+
+                Integer acidresult;
+                acidresult = QueryAcidClient.queryAcid();
+                if (acidresult != -1){
+                    config.setAcid(acidresult);
+                    ce.updateConfig(config);
+                    Log.i(TAG,"Set acid " + config.getAcid());
+                }
+
                 try {
                     p = Runtime.getRuntime().exec(path);
                     BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
