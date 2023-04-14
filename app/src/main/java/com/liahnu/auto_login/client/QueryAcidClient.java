@@ -22,13 +22,19 @@ public class QueryAcidClient {
             Uri uri = Uri.parse(url);
             id = uri.getQueryParameter("ac_id");
             if (StrUtil.isBlank(id)) {
-                if (StrUtil.isBlank((CharSequence) response.body())){
+                String body;
+                if (response.body() != null) {
+                    body = response.body().string();
+                } else {
                     Log.i("QueryAcidClient","Response body is empty!");
                     return -1;
                 }
-                String body = response.body().string();
                 int begin = body.indexOf("/index_") + 7;
                 int end = body.indexOf(".html", begin);
+                if (begin == 6 || end == -1) {
+                    Log.i("QueryAcidClient","Could not find acid in Response body!");
+                    return -1;
+                }
                 id = body.substring(begin, end);
             }
         } catch (IOException | NullPointerException e) {
