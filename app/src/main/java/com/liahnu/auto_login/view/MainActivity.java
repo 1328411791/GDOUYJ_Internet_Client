@@ -3,6 +3,7 @@ package com.liahnu.auto_login.view;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -20,7 +21,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.liahnu.auto_login.R;
-import com.liahnu.auto_login.client.QueryAcidClient;
 import com.liahnu.auto_login.domain.Config;
 import com.liahnu.auto_login.domain.User;
 import com.liahnu.auto_login.utilliiy.copyElfs;
@@ -86,7 +86,6 @@ public class MainActivity extends AppCompatActivity {
         if (isAutoLogin) {
             loginPass.setChecked(true);
             callAccount(true);
-            Toast.makeText(MainActivity.this, "开始自动登录...", Toast.LENGTH_SHORT).show();
         }
         button1.setOnClickListener(view -> {
             //判断按钮代码
@@ -110,8 +109,8 @@ public class MainActivity extends AppCompatActivity {
             editor.apply();
 
             if(config.getUsers().get(0).getUsername()!=null||config.getUsers().get(0).getPassword()!=null) {
-                Toast.makeText(MainActivity.this, "保存成功", Toast.LENGTH_SHORT).show();
-                callAccount(true);
+               Toast.makeText(MainActivity.this, "保存成功", Toast.LENGTH_SHORT).show();
+               callAccount(true);
             } else{
                 Toast.makeText(MainActivity.this, "保存失败", Toast.LENGTH_SHORT).show();
             }
@@ -194,15 +193,6 @@ public class MainActivity extends AppCompatActivity {
                 }
 
                 Log.i(TAG, path);
-
-                Integer acidresult;
-                acidresult = QueryAcidClient.queryAcid();
-                if (acidresult != -1){
-                    config.setAcid(acidresult);
-                    ce.updateConfig(config);
-                    Log.i(TAG,"Set acid " + config.getAcid());
-                }
-
                 try {
                     p = Runtime.getRuntime().exec(path);
                     BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
