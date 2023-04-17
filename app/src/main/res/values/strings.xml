@@ -17,4 +17,7 @@
     <string name="AboutOpenSource">开源相关</string>
     <string name="check_update">check update</string>
     <string name="start_auto_login">auto refresh acid</string>
+    <string name="ip">网关ip</string>
+    <string name="save">保存</string>
+    <string name="ac_id">ac_id</string>
 </resources>

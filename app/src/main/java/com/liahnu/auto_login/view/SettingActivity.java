@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.Switch;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -41,13 +42,29 @@ public class SettingActivity extends AppCompatActivity {
 
     private Button checkUpdate;
 
+    private TextView server;
+
+    private TextView acId;
+
     private copyElfs ce;
     private Config config;
+
+
+    private void setTextView(){
+        if(config==null){
+            showResponse("获取配置文件失败");
+            return;
+        }
+        server.setText(config.getServer());
+        acId.setText(config.getAcid());
+    }
 
     private void initConfig(){
         doubleStack =findViewById(R.id.double_stack);
         strictBind =findViewById(R.id.strict_bind);
         checkUpdate = findViewById(R.id.check_update);
+        server = findViewById(R.id.server);
+        acId = findViewById(R.id.ac_id);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             ce = new copyElfs(getBaseContext());
         }
@@ -57,6 +74,7 @@ public class SettingActivity extends AppCompatActivity {
         }else{
             Log.e(TAG, "获取文件失败");
         }
+        setTextView();
     }
 
     @Override
