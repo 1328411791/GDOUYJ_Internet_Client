@@ -42,6 +42,8 @@ public class SettingActivity extends AppCompatActivity {
 
     private Button checkUpdate;
 
+    private Button saveConfig;
+
     private TextView server;
 
     private TextView acId;
@@ -50,13 +52,14 @@ public class SettingActivity extends AppCompatActivity {
     private Config config;
 
 
+    @SuppressLint("SetTextI18n")
     private void setTextView(){
         if(config==null){
             showResponse("获取配置文件失败");
             return;
         }
         server.setText(config.getServer());
-        acId.setText(config.getAcid());
+        acId.setText(config.getAcid().toString());
     }
 
     private void initConfig(){
@@ -65,6 +68,7 @@ public class SettingActivity extends AppCompatActivity {
         checkUpdate = findViewById(R.id.check_update);
         server = findViewById(R.id.server);
         acId = findViewById(R.id.ac_id);
+        saveConfig = findViewById(R.id.save_config);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             ce = new copyElfs(getBaseContext());
         }
@@ -89,6 +93,20 @@ public class SettingActivity extends AppCompatActivity {
             checkUpdate();
         });
 
+        saveConfig.setOnClickListener(view -> {
+            Log.i(TAG, "保存配置");
+            saveConfig();
+        });
+
+
+
+    }
+
+    private void saveConfig() {
+        config.setAcid(Integer.parseInt(acId.getText().toString()));
+        config.setServer(server.getText().toString());
+        Log.i(TAG, config.toString());
+        ce.updateConfig(config);
     }
 
     private void checkUpdate(){
