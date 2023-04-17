@@ -3,6 +3,7 @@ package com.liahnu.auto_login.view;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -20,7 +21,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.liahnu.auto_login.R;
-import com.liahnu.auto_login.client.QueryAcidClient;
 import com.liahnu.auto_login.domain.Config;
 import com.liahnu.auto_login.domain.User;
 import com.liahnu.auto_login.utilliiy.copyElfs;
@@ -39,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
 
     private TextView infoTextView;
     @SuppressLint("UseSwitchCompatOrMaterialCode")
-    private Switch autoacid;
+    private Switch autologin;
     private CheckBox rememberPass;
     private String responseText;
     private CheckBox loginPass;
@@ -56,15 +56,13 @@ public class MainActivity extends AppCompatActivity {
         accountEdit = findViewById(R.id.User);
         passwordEdit = findViewById(R.id.Password);
         rememberPass = findViewById(R.id.remember_pass);
-        autoacid = findViewById(R.id.auto_acid);
+        autologin = findViewById(R.id.Auto_Login);
         loginPass = findViewById(R.id.auto_login);
         infoTextView = findViewById(R.id.info);
         Button button1 = findViewById(R.id.button_login);
         Button button_logout = findViewById(R.id.button_logout);
         boolean isAutoLogin = pref.getBoolean("auto_login", false);
         boolean isRemember = pref.getBoolean("remember_password", false);
-        final boolean[] isAutoAcid = {pref.getBoolean("auto_acid", false)};
-
 
         // 初始化文件
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
@@ -85,14 +83,9 @@ public class MainActivity extends AppCompatActivity {
             rememberPass.setChecked(true);
         }
 
-        if (isAutoAcid[0]) {
-            autoacid.setChecked(true);
-        }
-
         if (isAutoLogin) {
             loginPass.setChecked(true);
-            callAccount(true, isAutoAcid[0]);
-            Toast.makeText(MainActivity.this, "开始自动登录...", Toast.LENGTH_SHORT).show();
+            callAccount(true);
         }
         button1.setOnClickListener(view -> {
             //判断按钮代码
@@ -103,7 +96,7 @@ public class MainActivity extends AppCompatActivity {
 
             editor = pref.edit();
             editor.putBoolean("auto_login", loginPass.isChecked());
-            editor.putBoolean("auto_acid", autoacid.isChecked());
+
             // 保存用户信息
             editor.putBoolean("remember_password", true);
             // 保存用户信息
@@ -116,8 +109,8 @@ public class MainActivity extends AppCompatActivity {
             editor.apply();
 
             if(config.getUsers().get(0).getUsername()!=null||config.getUsers().get(0).getPassword()!=null) {
-                Toast.makeText(MainActivity.this, "保存成功", Toast.LENGTH_SHORT).show();
-                callAccount(true, isAutoAcid[0]);
+               Toast.makeText(MainActivity.this, "保存成功", Toast.LENGTH_SHORT).show();
+               callAccount(true);
             } else{
                 Toast.makeText(MainActivity.this, "保存失败", Toast.LENGTH_SHORT).show();
             }
@@ -126,18 +119,16 @@ public class MainActivity extends AppCompatActivity {
 
         button_logout.setOnClickListener(view -> {
             Log.d(TAG, "Click Logout");
-            callAccount(false, isAutoAcid[0]);
+            callAccount(false);
         });
 
-        autoacid.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        autologin.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 if (b) {
-                    isAutoAcid[0] = true; //使参数变化立即生效
-                    //Toast.makeText(MainActivity.this, String.valueOf(isAutoAcid[0]), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, "Yes", Toast.LENGTH_SHORT).show();
                 } else {
-                    isAutoAcid[0] = false; //使参数变化立即生效
-                    //Toast.makeText(MainActivity.this, String.valueOf(isAutoAcid[0]), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, "No", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -181,7 +172,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     // 1登录 0注销
-    private void callAccount(boolean status,boolean isAutoAcid) {
+    private void callAccount(boolean status) {
         new  Thread(new Runnable() {
             @Override
             public void run() {
@@ -202,17 +193,6 @@ public class MainActivity extends AppCompatActivity {
                 }
 
                 Log.i(TAG, path);
-
-                if (isAutoAcid && statusStr.equals("login")) {
-                    Integer acidresult;
-                    acidresult = QueryAcidClient.queryAcid();
-                    if (acidresult != -1){
-                        config.setAcid(acidresult);
-                        ce.updateConfig(config);
-                        Log.i(TAG,"Set acid " + config.getAcid());
-                    }
-                }
-
                 try {
                     p = Runtime.getRuntime().exec(path);
                     BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));

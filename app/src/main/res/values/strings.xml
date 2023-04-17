@@ -3,6 +3,7 @@
     <string name="password">PassWord</string>
     <string name="user_login">User Login</string>
     <string name="user_name">User_name</string>
+    <string name="start_auto_login">Hold Login(not available)</string>
     <string name="button2">Login</string>
     <string name="setting">Setting</string>
     <string name="exit">Exit</string>
@@ -16,5 +17,4 @@
     <string name="openSource1">https://github.com/zu1k/srun \n zu1k</string>
     <string name="AboutOpenSource">开源相关</string>
     <string name="check_update">check update</string>
-    <string name="start_auto_login">auto refresh acid</string>
 </resources>
