@@ -39,15 +39,12 @@ public class SettingActivity extends AppCompatActivity {
 
     @SuppressLint("UseSwitchCompatOrMaterialCode")
     private Switch  doubleStack;
-
     private Button checkUpdate;
-
     private Button saveConfig;
-
     private TextView server;
-
     private TextView acId;
-
+    private TextView tryTimes;
+    private TextView tryTimeout;
     private copyElfs ce;
     private Config config;
 
@@ -60,6 +57,8 @@ public class SettingActivity extends AppCompatActivity {
         }
         server.setText(config.getServer());
         acId.setText(config.getAcid().toString());
+        tryTimes.setText(config.getRetry_times().toString());
+        tryTimeout.setText(config.getRetry_delay().toString());
     }
 
     private void initConfig(){
@@ -69,6 +68,8 @@ public class SettingActivity extends AppCompatActivity {
         server = findViewById(R.id.server);
         acId = findViewById(R.id.ac_id);
         saveConfig = findViewById(R.id.save_config);
+        tryTimeout = findViewById(R.id.login_timeout);
+        tryTimes = findViewById(R.id.try_times);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             ce = new copyElfs(getBaseContext());
         }
@@ -105,8 +106,11 @@ public class SettingActivity extends AppCompatActivity {
     private void saveConfig() {
         config.setAcid(Integer.parseInt(acId.getText().toString()));
         config.setServer(server.getText().toString());
+        config.setRetry_times(Integer.parseInt(tryTimes.getText().toString()));
+        config.setRetry_delay(Integer.parseInt(tryTimeout.getText().toString()));
         Log.i(TAG, config.toString());
         ce.updateConfig(config);
+        showResponse("保存成功");
     }
 
     private void checkUpdate(){
