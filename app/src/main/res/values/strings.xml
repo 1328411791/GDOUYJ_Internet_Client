@@ -17,4 +17,11 @@
     <string name="AboutOpenSource">开源相关</string>
     <string name="check_update">check update</string>
     <string name="start_auto_login">auto refresh acid</string>
+    <string name="ip">网关ip</string>
+    <string name="save">保存</string>
+    <string name="ac_id">ac_id</string>
+    <string name="try_counts">尝试次数</string>
+    <string name="login_timeout">登录超时时间</string>
+    <string name="max_try">输入登录最多尝试次数</string>
+    <string name="max_time">输入登录最多尝试时间</string>
 </resources>
