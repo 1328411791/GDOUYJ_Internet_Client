@@ -129,17 +129,11 @@ public class MainActivity extends AppCompatActivity {
             callAccount(false, isAutoAcid[0]);
         });
 
-        autoacid.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                if (b) {
-                    isAutoAcid[0] = true; //使参数变化立即生效
-                    //Toast.makeText(MainActivity.this, String.valueOf(isAutoAcid[0]), Toast.LENGTH_SHORT).show();
-                } else {
-                    isAutoAcid[0] = false; //使参数变化立即生效
-                    //Toast.makeText(MainActivity.this, String.valueOf(isAutoAcid[0]), Toast.LENGTH_SHORT).show();
-                }
-            }
+        autoacid.setOnCheckedChangeListener((compoundButton, b) -> {
+            //Toast.makeText(MainActivity.this, String.valueOf(isAutoAcid[0]), Toast.LENGTH_SHORT).show();
+            //使参数变化立即生效
+            //Toast.makeText(MainActivity.this, String.valueOf(isAutoAcid[0]), Toast.LENGTH_SHORT).show();
+            isAutoAcid[0] = b; //使参数变化立即生效
         });
     }
 
