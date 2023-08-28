@@ -1,6 +1,10 @@
 package com.liahnu.auto_login.view;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -8,12 +12,15 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.liahnu.auto_login.R;
+import com.liahnu.auto_login.utilliiy.PermissionRequest;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
 public class WebView extends AppCompatActivity {
+
+    private static final String TAG = "WebView";
     TextView responseText;
 
     @Override
@@ -28,22 +35,12 @@ public class WebView extends AppCompatActivity {
     }
 
     private void sendRequestWithHttpURL(){
-        new  Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    OkHttpClient client =new OkHttpClient();
-                    Request request = new Request.Builder()
-                            .url("http://10.200.132.20:801/eportal/portal/login")
-                            .build();
-                    Response response = client.newCall(request).execute();
-                    String responseData = response.body().string();
-                    showResponse(responseData);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        }).start();
+        PermissionRequest permissionRequest = new PermissionRequest(this,
+                new String[] {
+                        Manifest.permission.ACCESS_FINE_LOCATION,
+                        Manifest.permission.ACCESS_COARSE_LOCATION
+                });
+        permissionRequest.requestPermission();
     }
 
     private void showResponse(final String response){
