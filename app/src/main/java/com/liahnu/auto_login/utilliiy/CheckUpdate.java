@@ -11,6 +11,8 @@ import com.liahnu.auto_login.execption.VersionException;
 
 import java.io.IOException;
 
+import cn.hutool.core.util.StrUtil;
+
 
 public class CheckUpdate {
 
@@ -22,8 +24,8 @@ public class CheckUpdate {
         this.context = context;
     }
 
-    public String checkUpdate4Github() throws PackageManager.NameNotFoundException, IOException, VersionException {
 
+    public String isUpdate() throws IOException, PackageManager.NameNotFoundException, VersionException {
         String version = ApisGithubReleaseClient.getReleaseVersion();
 
         if (version == null){
@@ -36,6 +38,12 @@ public class CheckUpdate {
         if (versionName.equals(version.replace("v",""))){
             throw new VersionException(version.replace("v",""),versionName);
         }
+        return version;
+    }
+
+    public String checkUpdate4Github() throws PackageManager.NameNotFoundException, IOException, VersionException {
+
+        String version = isUpdate();
 
         String DownloadUrl = "https://github.com/1328411791/GDOUYJ_Internet_Client/releases/download/"
                 + version
