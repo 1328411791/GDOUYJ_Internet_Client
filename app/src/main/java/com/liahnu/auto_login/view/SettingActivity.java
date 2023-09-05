@@ -1,11 +1,8 @@
 package com.liahnu.auto_login.view;
 
-import android.accessibilityservice.AccessibilityService;
 import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.net.Uri;
-import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -16,19 +13,11 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.SwitchCompat;
 
 import com.liahnu.auto_login.R;
 import com.liahnu.auto_login.domain.Config;
-import com.liahnu.auto_login.execption.VersionException;
-import com.liahnu.auto_login.utilliiy.CheckUpdate;
+import com.liahnu.auto_login.jobs.CheckUpdateJob;
 import com.liahnu.auto_login.utilliiy.copyElfs;
-
-import java.io.IOException;
-
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
 
 public class SettingActivity extends AppCompatActivity {
 
@@ -88,7 +77,6 @@ public class SettingActivity extends AppCompatActivity {
         setContentView(R.layout.activity_setting);
         initConfig();
 
-
         checkUpdate.setOnClickListener(view -> {
             Log.i(TAG, "检查更新");
             checkUpdate();
@@ -98,8 +86,6 @@ public class SettingActivity extends AppCompatActivity {
             Log.i(TAG, "保存配置");
             saveConfig();
         });
-
-
 
     }
 
@@ -113,23 +99,9 @@ public class SettingActivity extends AppCompatActivity {
         showResponse("保存成功");
     }
 
-    private void checkUpdate(){
-        new  Thread(new Runnable() {
-            @Override
-            public void run() {
-                CheckUpdate checkUpdate = new CheckUpdate(getBaseContext());
-                try {
-                    String downloadURL = checkUpdate.checkUpdate4Github();
-                    startBrowser(downloadURL);
-                } catch (PackageManager.NameNotFoundException | IOException e) {
-                    Log.e(TAG, "检查更新失败");
-                    showResponse("检查更新失败,请检查网络连接");
-                } catch (VersionException e) {
-                    Log.e(TAG, "已经是最新版本");
-                    showResponse("已经是最新版本，目前版本为"+e.getNowVersion()+"，最新版本为"+e.getNewVersion());
-                }
-            }
-        }).start();
+    private void checkUpdate() {
+        CheckUpdateJob job = new CheckUpdateJob(this);
+        job.start();
     }
 
 
