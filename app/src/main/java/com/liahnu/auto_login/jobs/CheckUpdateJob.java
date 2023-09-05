@@ -43,7 +43,7 @@ public class CheckUpdateJob implements Runnable {
     private void startBrowser(final String url) {
         activity.runOnUiThread(() -> {
             Log.i(TAG, url);
-            Toast.makeText(activity, "跳转到浏览器", Toast.LENGTH_SHORT).show();
+            Toast.makeText(activity, "检测到有新版本，正在跳转到浏览器", Toast.LENGTH_LONG).show();
             Intent intent = new Intent();
             intent.setAction("android.intent.action.VIEW");
             Uri content_url = Uri.parse(url);

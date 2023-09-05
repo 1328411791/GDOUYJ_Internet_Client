@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -14,7 +13,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -27,15 +25,13 @@ import com.liahnu.auto_login.R;
 import com.liahnu.auto_login.client.QueryAcidClient;
 import com.liahnu.auto_login.domain.Config;
 import com.liahnu.auto_login.domain.User;
-import com.liahnu.auto_login.execption.VersionException;
-import com.liahnu.auto_login.utilliiy.CheckUpdate;
+import com.liahnu.auto_login.jobs.CheckUpdateJob;
+import com.liahnu.auto_login.utilliiy.PermissionRequest;
 import com.liahnu.auto_login.utilliiy.copyElfs;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-
-import cn.hutool.core.util.StrUtil;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -56,39 +52,39 @@ public class MainActivity extends AppCompatActivity {
 
     private Config config;
 
-    void init(){
+    void init() {
         // 初始化文件
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
             ce = new copyElfs(getBaseContext());
         }
 
-        // 检查更新
-        /*
-        CheckUpdate checkUpdate = new CheckUpdate(getBaseContext());
+        // 初始化权限
+        boolean isRequestPermission = pref.getBoolean("request_permission", false);
 
-        try {
-            String downloadURL = checkUpdate.isUpdate();
-            if(StrUtil.isNotBlank(downloadURL)){
-                showMessage("检查到新版本,请去设置中下载");
-            }
-        } catch (PackageManager.NameNotFoundException | IOException e) {
-            Log.e(TAG, "检查更新失败");
-            Toast.makeText(this,"检查更新失败,请检查网络连接",Toast.LENGTH_SHORT)
-                    .show();
-        } catch (VersionException e) {
-            Log.e(TAG, "已经是最新版本");
-            Toast.makeText(this,
-                    "已经是最新版本，目前版本为"+e.getNowVersion()+"，最新版本为"+e.getNewVersion(),
-                    Toast.LENGTH_SHORT).show();
+        // 如果没有获取过权限，就获取权限
+        if (!isRequestPermission) {
+            Toast.makeText(MainActivity.this, "Wifi登录需要获取以下权限", Toast.LENGTH_SHORT).show();
+            String[] permissions = new String[]{
+                    "android.permission.ACCESS_FINE_LOCATION",
+                    "android.permission.ACCESS_COARSE_LOCATION"
+            };
+            PermissionRequest permissionRequest = new PermissionRequest(this, permissions);
+            permissionRequest.requestPermission();
+
+            editor = pref.edit();
+            editor.putBoolean("request_permission", true);
+            editor.apply();
         }
-         */
+
+        CheckUpdateJob checkUpdateJob = new CheckUpdateJob(this);
+        checkUpdateJob.start();
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
         pref = PreferenceManager.getDefaultSharedPreferences(this);
+        setContentView(R.layout.activity_main);
         accountEdit = findViewById(R.id.User);
         passwordEdit = findViewById(R.id.Password);
         rememberPass = findViewById(R.id.remember_pass);

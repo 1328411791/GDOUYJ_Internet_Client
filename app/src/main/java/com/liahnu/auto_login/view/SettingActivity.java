@@ -1,8 +1,6 @@
 package com.liahnu.auto_login.view;
 
 import android.annotation.SuppressLint;
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -41,7 +39,8 @@ public class SettingActivity extends AppCompatActivity {
     @SuppressLint("SetTextI18n")
     private void setTextView(){
         if(config==null){
-            showResponse("获取配置文件失败");
+            Log.e(TAG, "config is null");
+            Toast.makeText(this, "获取配置失败", Toast.LENGTH_SHORT).show();
             return;
         }
         server.setText(config.getServer());
@@ -96,35 +95,12 @@ public class SettingActivity extends AppCompatActivity {
         config.setRetry_delay(Integer.parseInt(tryTimeout.getText().toString()));
         Log.i(TAG, config.toString());
         ce.updateConfig(config);
-        showResponse("保存成功");
+        Toast.makeText(this, "保存成功", Toast.LENGTH_SHORT).show();
     }
 
     private void checkUpdate() {
         CheckUpdateJob job = new CheckUpdateJob(this);
         job.start();
-    }
-
-
-    private void showResponse(final String response){
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                Toast.makeText(SettingActivity.this, response, Toast.LENGTH_LONG).show();
-            }
-        });
-    }
-
-    private void startBrowser(final String url){
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                Log.i(TAG, url);
-                Toast.makeText(SettingActivity.this, "跳转到浏览器", Toast.LENGTH_SHORT).show();
-                Intent intent =new Intent(Intent.ACTION_VIEW);
-                intent.setData(Uri.parse(url));
-                startActivity(intent);
-            }
-        });
     }
 
 
