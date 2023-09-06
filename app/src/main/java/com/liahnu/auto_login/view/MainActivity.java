@@ -212,7 +212,7 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
-        new  Thread(new Runnable() {
+        new Thread(new Runnable() {
             @Override
             public void run() {
                 Process p;
