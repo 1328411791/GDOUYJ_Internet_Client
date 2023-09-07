@@ -26,8 +26,8 @@ import com.liahnu.auto_login.client.QueryAcidClient;
 import com.liahnu.auto_login.domain.Config;
 import com.liahnu.auto_login.domain.User;
 import com.liahnu.auto_login.jobs.CheckUpdateJob;
+import com.liahnu.auto_login.utilliiy.CopyElfs;
 import com.liahnu.auto_login.utilliiy.PermissionRequest;
-import com.liahnu.auto_login.utilliiy.copyElfs;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -48,14 +48,14 @@ public class MainActivity extends AppCompatActivity {
     private String responseText;
     private CheckBox loginPass;
 
-    private copyElfs ce;
+    private CopyElfs ce;
 
     private Config config;
 
     void init() {
         // 初始化文件
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-            ce = new copyElfs(getBaseContext());
+            ce = new CopyElfs(getBaseContext());
         }
 
         // 初始化权限
