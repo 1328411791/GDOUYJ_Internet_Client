@@ -42,10 +42,9 @@ public class CopyElfs {
         appFileDirectory = "/data/data/" + ct.getPackageName();
 
         executableFilePath = appFileDirectory + "/executable";
-        Log.e(tag, "cpu type:" + cpuType);
         //        cputype = Build.SUPPORTED_ABIS[0];
         cpuType = Build.CPU_ABI;
-        Log.e(tag, "cpu type:" + cpuType);
+        Log.i(tag, "cpu type:" + cpuType);
         assetManager = ct.getAssets();
         try {
             resList = Arrays.asList(ct.getAssets().list(cpuType +"/"));
