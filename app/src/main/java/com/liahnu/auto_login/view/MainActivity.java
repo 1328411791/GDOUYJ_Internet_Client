@@ -21,6 +21,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.fm.openinstall.OpenInstall;
 import com.liahnu.auto_login.R;
 import com.liahnu.auto_login.client.QueryAcidClient;
 import com.liahnu.auto_login.domain.Config;
@@ -78,6 +79,11 @@ public class MainActivity extends AppCompatActivity {
 
         CheckUpdateJob checkUpdateJob = new CheckUpdateJob(this);
         checkUpdateJob.start();
+
+        // 初始化配置文件
+        OpenInstall.clipBoardEnabled(false);
+        OpenInstall.init(this);
+
     }
 
     @Override
