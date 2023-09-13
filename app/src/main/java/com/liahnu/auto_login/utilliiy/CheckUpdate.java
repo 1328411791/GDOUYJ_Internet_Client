@@ -1,17 +1,14 @@
 package com.liahnu.auto_login.utilliiy;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.net.Uri;
 import android.util.Log;
 
 import com.liahnu.auto_login.client.ApisGithubReleaseClient;
+import com.liahnu.auto_login.domain.DownloadConfig;
 import com.liahnu.auto_login.execption.VersionException;
 
 import java.io.IOException;
-
-import cn.hutool.core.util.StrUtil;
 
 
 public class CheckUpdate {
@@ -41,18 +38,22 @@ public class CheckUpdate {
         return version;
     }
 
-    public String checkUpdate4Github() throws PackageManager.NameNotFoundException, IOException, VersionException {
+    public DownloadConfig checkUpdate4Github() throws PackageManager.NameNotFoundException, IOException, VersionException {
 
         String version = isUpdate();
 
         String DownloadUrl = "https://github.com/1328411791/GDOUYJ_Internet_Client/releases/download/"
                 + version
-                + "/GDOUYJ_Internet_Client_"+ version +".apk";
+                + "/GDOUYJ_Internet_Client_" + version + ".apk";
 
         Log.i(TAG, "DownloadURL: " + DownloadUrl);
 
+        DownloadConfig config = new DownloadConfig();
+        config.setVersion(version);
+        config.setDownloadUrl(DownloadUrl);
+        config.setFileName("GDOUYJ_Internet_Client_" + version + ".apk");
 
-        return DownloadUrl;
+        return config;
     }
 
 

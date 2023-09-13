@@ -15,7 +15,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.liahnu.auto_login.R;
 import com.liahnu.auto_login.domain.Config;
 import com.liahnu.auto_login.jobs.CheckUpdateJob;
-import com.liahnu.auto_login.utilliiy.copyElfs;
+import com.liahnu.auto_login.utilliiy.CopyElfs;
 
 public class SettingActivity extends AppCompatActivity {
 
@@ -32,7 +32,7 @@ public class SettingActivity extends AppCompatActivity {
     private TextView acId;
     private TextView tryTimes;
     private TextView tryTimeout;
-    private copyElfs ce;
+    private CopyElfs ce;
     private Config config;
 
 
@@ -59,7 +59,7 @@ public class SettingActivity extends AppCompatActivity {
         tryTimeout = findViewById(R.id.login_timeout);
         tryTimes = findViewById(R.id.try_times);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            ce = new copyElfs(getBaseContext());
+            ce = new CopyElfs(getBaseContext());
         }
 
         if(ce!=null) {

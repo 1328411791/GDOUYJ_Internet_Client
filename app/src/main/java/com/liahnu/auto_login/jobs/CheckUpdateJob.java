@@ -1,12 +1,14 @@
 package com.liahnu.auto_login.jobs;
 
 import android.app.Activity;
-import android.content.Intent;
+import android.app.DownloadManager;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.liahnu.auto_login.domain.DownloadConfig;
 import com.liahnu.auto_login.execption.VersionException;
 import com.liahnu.auto_login.utilliiy.CheckUpdate;
 
@@ -25,8 +27,8 @@ public class CheckUpdateJob implements Runnable {
     public void run() {
         CheckUpdate checkUpdate = new CheckUpdate(activity.getBaseContext());
         try {
-            String downloadURL = checkUpdate.checkUpdate4Github();
-            startBrowser(downloadURL);
+            DownloadConfig config = checkUpdate.checkUpdate4Github();
+            startBrowser(config);
         } catch (PackageManager.NameNotFoundException | IOException e) {
             Log.e(TAG, "检查更新失败");
             showResponse("检查更新失败,请检查网络连接");
@@ -40,15 +42,21 @@ public class CheckUpdateJob implements Runnable {
         new Thread(this).start();
     }
 
-    private void startBrowser(final String url) {
+    private void startBrowser(final DownloadConfig config) {
         activity.runOnUiThread(() -> {
-            Log.i(TAG, url);
-            Toast.makeText(activity, "检测到有新版本，正在跳转到浏览器", Toast.LENGTH_LONG).show();
-            Intent intent = new Intent();
-            intent.setAction("android.intent.action.VIEW");
-            Uri content_url = Uri.parse(url);
-            intent.setData(content_url);
-            activity.startActivity(intent);
+            Log.i(TAG, config.getDownloadUrl());
+            Toast.makeText(activity, "检测到有新版本，正在加入下载队列", Toast.LENGTH_LONG).show();
+            // 将url加入下载队列
+            Uri uri = Uri.parse(config.getDownloadUrl());
+            DownloadManager downloadManager = (DownloadManager) activity.getSystemService(Context.DOWNLOAD_SERVICE);
+            DownloadManager.Request request = new DownloadManager.Request(uri);
+            request.setTitle(config.getFileName());
+            request.setDescription(config.getFileName());
+            request.setVisibleInDownloadsUi(true);
+            request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_MOBILE | DownloadManager.Request.NETWORK_WIFI);
+            request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+            long id = downloadManager.enqueue(request);
+            Log.i(TAG, "download id: " + id);
         });
     }
 
