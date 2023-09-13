@@ -45,7 +45,7 @@ public class CheckUpdateJob implements Runnable {
     private void startBrowser(final DownloadConfig config) {
         activity.runOnUiThread(() -> {
             Log.i(TAG, config.getDownloadUrl());
-            Toast.makeText(activity, "检测到有新版本，正在跳转到浏览器", Toast.LENGTH_LONG).show();
+            Toast.makeText(activity, "检测到有新版本，正在加入下载队列", Toast.LENGTH_LONG).show();
             // 将url加入下载队列
             Uri uri = Uri.parse(config.getDownloadUrl());
             DownloadManager downloadManager = (DownloadManager) activity.getSystemService(Context.DOWNLOAD_SERVICE);
